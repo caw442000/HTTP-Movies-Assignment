@@ -13,30 +13,70 @@ const UpdateMovieForm = props => {
   const [movie, setMovie] = useState(initialMovie);
   const { id } = useParams();
   const history = useHistory();
+  
+
+  console.log("This is id: ", id)
 
   useEffect(()=> {
-  })
+    const movieToUpdate= props.movieList.find(movie =>`${movie.id}` === id);
+    console.log("Movie to update", movieToUpdate);
+
+    if(movieToUpdate) {
+      setMovie(movieToUpdate);
+      console.log("Movie to update", movieToUpdate);
+
+    }
+
+  }, [props.movieList, id])
 
   const changeHandler = e => {
     e.persist();
     const value = e.target.value;
 
-    if(e.target.name === 'metascore'){
-      value = parseInt(value, 10);   
-    }
+    
+
+    // if(e.target.name === 'stars'){
+    //   newStarsArr = Array.from(value);
+    //   console.log("newStars", newStarsArr)
+    // }
 
     setMovie({
       ...movie,
       [ e.target.name ]: value
+     
+ 
     });
   };
 
   const handleSubmit = e => {
     e.preventDefault();
+    
 
-    axios.put(`http://localhost:5000//api/movies/${id}`, movie)
+
+    const formattedMovie = {
+      ...movie,
+      stars: movie.stars.split(", ") || movie.stars
+    }
+  
+    
+    axios.put(`http://localhost:5000/api/movies/${id}`, formattedMovie)
     .then( res => {
       console.log("response from put: ", res);
+      // props.setMovieList(res.data)
+      // props.setMovieList(res.data)
+      // console.log("movie list returned from put: ", props.movieList)
+      const updatedMovie = res.data;
+      const NewMovieList = props.movieList.map(movie => {
+        if(movie.id !== updatedMovie.id){
+          return movie
+        }
+        return updatedMovie;
+      })  
+      props.setMovieList(NewMovieList);
+      setMovie(initialMovie);
+      history.push('/');
+      
+ 
 
     })
     .catch( err => {
@@ -45,6 +85,8 @@ const UpdateMovieForm = props => {
     });
 
   };
+
+
   
   console.log("Movie List passed as props", props.movieList)
   return (
