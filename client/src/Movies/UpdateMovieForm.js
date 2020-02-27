@@ -29,22 +29,39 @@ const UpdateMovieForm = props => {
 
   }, [props.movieList, id])
 
+    const formatMovie = (movie) => {
+    
+    console.log("this is movie to format: ", movie)
+
+    if(Array.isArray(movie.stars)){
+      return movie;
+
+    }else {
+      // formattedMovieStars = movie.stars.split(", ");
+      const formattedMovie = {
+        ...movie,
+        stars: movie.stars.split(/\s*(?:,|$)\s*/) || movie.stars
+
+      }
+      return formattedMovie
+    }
+  }
+  // const formattedMovie = {
+  //   ...movie,
+  //   
+  // }
   const changeHandler = e => {
     e.persist();
     const value = e.target.value;
 
     
 
-    // if(e.target.name === 'stars'){
-    //   newStarsArr = Array.from(value);
-    //   console.log("newStars", newStarsArr)
-    // }
+ 
 
     setMovie({
       ...movie,
       [ e.target.name ]: value
-     
- 
+
     });
   };
 
@@ -53,13 +70,10 @@ const UpdateMovieForm = props => {
     
 
 
-    const formattedMovie = {
-      ...movie,
-      stars: movie.stars.split(", ") || movie.stars
-    }
+    const submittedMovie = formatMovie(movie)
   
     
-    axios.put(`http://localhost:5000/api/movies/${id}`, formattedMovie)
+    axios.put(`http://localhost:5000/api/movies/${id}`, submittedMovie )
     .then( res => {
       console.log("response from put: ", res);
       // props.setMovieList(res.data)

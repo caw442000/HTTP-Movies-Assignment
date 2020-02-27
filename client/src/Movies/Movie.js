@@ -34,8 +34,16 @@ function Movie({ addToSavedList, movieList, setMovieList }) {
     axios
       .delete(`http://localhost:5000/api/movies/${id}`)
       .then(res => {
+        console.log("this is the delete response: ", res)
+      // setMovieList(res.data);
+      const NewMovieList = movieList.filter(movie => movie.id !== res.data);
+  
+        setMovieList(NewMovieList);
         history.push("/")
+        
       });
+
+  
   }
 
   useEffect(() => {
